@@ -183,7 +183,7 @@ void kernel_main(uint32_t r0, uint32_t r1, uint32_t atags)
 	int e=0;
 	int f=0;
 	char color=255;
-	char *scr;
+	char *scr=NULL;
 	uart_init(2);
 	uart_puts("\ec\e[42;30m\nscreen!\r\n");
 	//while (1)
