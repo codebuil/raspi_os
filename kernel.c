@@ -6,6 +6,38 @@
 uint16_t *fbp;
 
 static uint32_t MMIO_BASE;
+void hline(int x, int y,int x2,char r,char g,char b){
+int f;
+int xx1=x;
+int xx2=x2;
+int xx3=x;
+int yy=y;
+int steeps;
+int location;
+int addss;
+if(xx2<xx1){
+xx1=xx2;
+xx2=xx3;
+}
+if(yy<0)yy=0;
+if(yy>479)yy=479;
+if(xx1<0)xx1=0;
+if(xx2<0)xx2=0;
+if(xx1>639)xx1=639;
+if(xx2>639)xx2=639;
+                       
+location =  640 * y + x;
+steeps=xx2-xx1;
+addss=1;
+for(f=0;f<steeps;f++){
+                uint16_t t = r<<11 | g << 5 | b;
+                *((uint16_t*)(fbp + location)) = t;
+
+location=location+addss;
+}
+
+}
+
 void vline(int x,int y,int y2,char r,char g,char b){
 int f;
 int yy1=y;
@@ -20,7 +52,7 @@ yy1=yy2;
 yy2=yy3;
 }
 if(xx<0)xx=0;
-if(xx>679)xx=639;
+if(xx>639)xx=639;
 if(yy1<0)yy1=0;
 if(yy2<0)yy2=0;
 if(yy1>479)yy1=479;
@@ -240,10 +272,10 @@ void kernel_main(uint32_t r0, uint32_t r1, uint32_t atags)
 		//uart_putc(uart_getc());
 	startX();
 
-				for(d=0;d<640;d=d+2){
-					ppixel(d,240,0,255,0);
+				for(d=0;d<479;d++){
+					hline(0,d,639,0,15,0);
 				}
-				vline(320,0,479,0,255,0);
+
 			
 		
 	
