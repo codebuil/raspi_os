@@ -182,21 +182,21 @@ void kernel_main(uint32_t r0, uint32_t r1, uint32_t atags)
 	int d=0;
 	int e=0;
 	int f=0;
-	char color=255;
+	char color=0xf;
 	char *scr=NULL;
 	uart_init(2);
 	uart_puts("\ec\e[42;30m\nscreen!\r\n");
 	//while (1)
 		//uart_putc(uart_getc());
-	for(a=0x04100000;a<0x04190000;a=a+0x10000){
+	a=0x04100000;
 				hexs(a);
-				for(d=0;d<0x10000;d++){
-					*(scr + a+d+0)=color;
+				for(d=0;d<640*480*2;d=d+2){
+					*(scr + a+d+1)=color;
 				}
 		
 			
 		
-	}
+	
 
 
 
