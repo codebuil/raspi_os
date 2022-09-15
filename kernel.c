@@ -1,8 +1,27 @@
 #include <stddef.h>
 #include <stdint.h>
+#define FONTDATAMAX 2048
+#define PI 3.1415927
+
+uint16_t *fbp;
+
 static uint32_t MMIO_BASE;
 
- 
+void startX(){
+		fbp=(uint16_t * )0x04100000;
+} 
+void ppixel(int x, int y,char r,char g,char b){
+if (x>0 && y>0 && x<640 && y<480){
+           int location = 640 * y + x;
+                  
+                uint16_t t = r<<11 | g << 5 | b;
+                *((uint16_t *)(fbp + location)) = t;
+
+}
+}
+
+
+
 // The MMIO area base address, depends on board type
 static inline void mmio_init(int raspi)
 {
@@ -188,10 +207,10 @@ void kernel_main(uint32_t r0, uint32_t r1, uint32_t atags)
 	uart_puts("\ec\e[42;30m\nscreen!\r\n");
 	//while (1)
 		//uart_putc(uart_getc());
-	a=0x04100000;
-				hexs(a);
-				for(d=0;d<640*480*2;d=d+2){
-					*(scr + a+d+1)=color;
+	startX();
+
+				for(d=0;d<640;d=d+2){
+					ppixel(d,240,0,255,0);
 				}
 		
 			
