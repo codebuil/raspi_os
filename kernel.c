@@ -6,6 +6,37 @@
 uint16_t *fbp;
 
 static uint32_t MMIO_BASE;
+void vline(int x,int y,int y2,char r,char g,char b){
+int f;
+int yy1=y;
+int yy2=y2;
+int yy3=y;
+int xx=x;
+int steeps;
+int location;
+int addss;
+if(yy2<yy1){
+yy1=yy2;
+yy2=yy3;
+}
+if(xx<0)xx=0;
+if(xx>679)xx=639;
+if(yy1<0)yy1=0;
+if(yy2<0)yy2=0;
+if(yy1>479)yy1=479;
+if(yy2>479-1)yy2=479;
+                       
+location =  640 * y + x;
+steeps=yy2-yy1;
+addss=640;
+for(f=0;f<steeps;f++){
+                uint16_t t = r<<11 | g << 5 | b;
+                *((uint16_t*)(fbp + location)) = t;
+
+location=location+addss;
+}
+}
+
 
 void startX(){
 		fbp=(uint16_t * )0x04100000;
@@ -212,7 +243,7 @@ void kernel_main(uint32_t r0, uint32_t r1, uint32_t atags)
 				for(d=0;d<640;d=d+2){
 					ppixel(d,240,0,255,0);
 				}
-		
+				vline(320,0,479,0,255,0);
 			
 		
 	
