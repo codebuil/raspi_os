@@ -6,6 +6,55 @@
 uint16_t *fbp;
 
 static uint32_t MMIO_BASE;
+void boxs(int x,int y,int x2,int y2,char r,char g,char b){
+int f;
+int ff;
+int xx1=x;
+int xx2=x2;
+int xx3=x;
+int yy=y;
+int yy1=y;
+int yy2=y2;
+int yy3=y;
+int steeps;
+int steeps2;
+int location;
+int addss;
+int addss2;
+if(xx2<xx1){
+xx1=xx2;
+xx2=xx3;
+}
+if(yy2<yy1){
+yy1=yy2;
+yy2=yy3;
+}
+if(yy1<0)yy1=0;
+if(yy2<0)yy2=0;
+if(yy1>479)yy1=479;
+if(yy2>479)yy2=479;
+if(xx1<0)xx1=0;
+if(xx2<0)xx2=0;
+if(xx1>639)xx1=639;
+if(xx2>639)xx2=639;
+                       
+location =  640 * y + x;
+steeps2=xx2-xx1;
+steeps=yy2-yy1;
+addss=1;
+addss2=((640-(xx2-xx1)));
+if(addss2<addss)addss2=0;
+for(f=0;f<steeps;f++){
+	for(ff=0;ff<steeps2;ff++){
+                uint16_t t = r<<11 | g << 5 | b;
+                *((uint16_t*)(fbp + location)) = t;
+location=location+addss;
+}
+location=location+addss2;
+}
+}
+
+
 void hline(int x, int y,int x2,char r,char g,char b){
 int f;
 int xx1=x;
@@ -268,18 +317,18 @@ void kernel_main(uint32_t r0, uint32_t r1, uint32_t atags)
 	char *scr=NULL;
 	uart_init(2);
 	uart_puts("\ec\e[42;30m\nscreen!\r\n");
-	//while (1)
-		//uart_putc(uart_getc());
 	startX();
 
-				for(d=0;d<479;d++){
-					hline(0,d,639,0,15,0);
-				}
+
+					boxs(0,0,639,479,0,15,0);
+
 
 			
 		
 	
 
+	while (1)
+		uart_putc(uart_getc());
 
 
 }
