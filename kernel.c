@@ -1,8 +1,9 @@
+
 #include <stddef.h>
 #include <stdint.h>
 #define FONTDATAMAX 2048
 #define PI 3.1415927
-
+int memorys;
 uint16_t *fbp;
 struct arrayMaps{
 	int w;
@@ -5295,6 +5296,7 @@ location=location+addss;
 
 
 void startX(){
+		memorys=0x04100008+640*480*2;
 		fbp=(uint16_t * )0x04100000;
 } 
 void ppixel(int x, int y,char r,char g,char b){
@@ -5305,6 +5307,92 @@ if (x>0 && y>0 && x<640 && y<480){
                 *((uint16_t *)(fbp + location)) = t;
 
 }
+}
+void putImage(int x,int y, int *img){
+int f;
+int ff;
+int r;
+int g;
+int b;
+int rr;
+int gg;
+int bb;
+int xx1=x;
+int xx2=img[0]+x;
+int xx3=x;
+int yy1=y;
+int yy2=img[1]+y;
+int yy3=y;
+int yy=y;
+int steeps;
+int steeps2;
+int location;
+int locations;
+int addss;
+int addss2;
+int addss3;
+int addss4;
+if(xx2>640)xx2=640;
+if(yy2>480)yy2=480;
+if(xx2<xx1){
+xx1=xx2;
+xx2=xx3;
+}
+if(yy2<yy1){
+yy1=yy2;
+yy2=yy3;
+}
+if(yy1<0)yy1=0;
+if(yy2<0)yy2=0;
+if(yy1>480)yy1=480;
+if(yy2>480)yy2=480;
+if(xx1<0)xx1=0;
+if(xx2<0)xx2=0;
+if(xx1>640)xx1=640;
+if(xx2>640)xx2=640;
+steeps=xx2-xx1;
+steeps2=yy2-yy1;
+addss=1;
+addss3=1;
+addss4=((640-(xx2-xx1))*addss3);
+addss2=img[0]-(xx2-xx1); 
+if(addss2<1)addss2=0;
+location=3;
+locations = 640*y+x;
+
+for(f=0;f<steeps2;f++){
+	for(ff=0;ff<steeps;ff++){
+		b=(img[f*img[0]+ff+location] & 0xff);
+		g=(img[f*img[0]+ff+location] & 0xff00)>>8;
+		r=(img[f*img[0]+ff+location] & 0xff0000)>>16;
+             uint16_t t = r<<11 | g << 5 | b;
+             *((uint16_t *)(fbp + locations)) = t;
+		locations=locations+addss3;
+	}
+	location=location+addss2;
+	locations=locations+addss4;
+}
+}
+
+
+void memfill(char *from,int lens,char value){
+	int n;
+	for(n=0;n<lens;n++){
+		from[n]=value;
+	}
+}
+int *malloc(int sizes){
+	int *mmemoryss=(int*)memorys;
+	memorys=memorys+8;
+	return mmemoryss;
+	
+}
+int *creatImage(int w,int h){
+int *bytes=(int *) malloc((w)*(h)*sizeof(int)+sizeof(int)*4);
+bytes[0]=w;
+bytes[1]=h;
+bytes[2]=32;
+return (int *) bytes;
 }
 
 void line(int x,int y,int x2,int y2,char r,char g,char b){
@@ -5380,7 +5468,6 @@ xx=xx+8;
 ii++;
 }
 }
-
 
 // The MMIO area base address, depends on board type
 static inline void mmio_init(int raspi)
@@ -5555,6 +5642,8 @@ void kernel_main(uint32_t r0, uint32_t r1, uint32_t atags)
 #endif
 {
 	// initialize UART for Raspi2
+	int *img1;
+	int *bodys;
 	int a=0;
 	int b=0;
 	int c=0;
@@ -5566,8 +5655,9 @@ void kernel_main(uint32_t r0, uint32_t r1, uint32_t atags)
 	uart_init(2);
 	uart_puts("\ec\e[42;30m\nscreen!\r\n");
 	startX();
-
-
+	img1=creatImage(25,25);
+	bodys=img1+3;
+			memfill((char *)bodys,25*25*4,255);
 					//boxs(0,0,639,479,0,15,0);
 				scr.x=0;
 				scr.y=0;
@@ -5575,7 +5665,7 @@ void kernel_main(uint32_t r0, uint32_t r1, uint32_t atags)
 				scr.h=479;
 				grid(scr,16,0,15,0);
 				gputs(20,240,255,255,255,"hello world.....");
-
+				putImage(10,10,img1);
 			
 		
 	
