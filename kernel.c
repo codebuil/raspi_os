@@ -4,6 +4,13 @@
 #define PI 3.1415927
 
 uint16_t *fbp;
+struct control{
+int x;
+int y;
+int w;
+int h;
+};
+
 
 static uint32_t MMIO_BASE;
 void boxs(int x,int y,int x2,int y2,char r,char g,char b){
@@ -132,6 +139,40 @@ if (x>0 && y>0 && x<640 && y<480){
 }
 }
 
+void line(int x,int y,int x2,int y2,char r,char g,char b){
+int i=-1;
+if(x>x2 && y<y2)i=5;
+if(x>x2 && y>y2)i=4;
+if(x<x2 && y<y2)i=3;
+if(x<x2 && y>y2)i=2;
+if(y==y2 && x<x2)i=0;
+if(x==x2 && y<y2)i=1;
+if(y==y2 && x2<x)i=0;
+if(x==x2 && y2<y)i=1;
+if (i==0)hline(x,y,x2,r,g,b);
+if (i==1)vline(x,y,y2,r,g,b);
+//if (i==2)lineL(x,y,x2,y2,r,g,b);
+//if (i==3)lineR(x,y,x2,y2,r,g,b);
+//if (i==4)lineR(x2,y2,x,y,r,g,b);
+//if (i==5)lineL(x2,y2,x,y,r,g,b);
+if (i==7)hline(x2,y,x,r,g,b);
+if (i==6)vline(x,y2,y,r,g,b);
+}
+
+void rectangle(int x,int y,int x2,int y2,char r,char g,char b){
+line(x,y,x2,y,r,g,b);
+line(x,y2,x2,y2,r,g,b);
+line(x,y,x,y2,r,g,b);
+line(x2,y,x2,y2,r,g,b);
+}
+
+void grid (struct control c,int steep,char r,char g,char b){
+int i;
+boxs(c.x,c.y,c.x+c.w,c.y+c.h,0,0,0);
+rectangle(c.x,c.y,c.x+c.w,c.y+c.h,r,g,b);
+for(i=c.x;i<c.x+c.w;i=i+steep)line(i,c.y,i,c.y+c.h,r,g,b);
+for(i=c.y;i<c.y+c.h;i=i+steep)line(c.x,i,c.x+c.w,i,r,g,b);
+}
 
 
 // The MMIO area base address, depends on board type
@@ -314,14 +355,19 @@ void kernel_main(uint32_t r0, uint32_t r1, uint32_t atags)
 	int e=0;
 	int f=0;
 	char color=0xf;
-	char *scr=NULL;
+	struct control scr;
 	uart_init(2);
 	uart_puts("\ec\e[42;30m\nscreen!\r\n");
 	startX();
 
 
-					boxs(0,0,639,479,0,15,0);
-
+					//boxs(0,0,639,479,0,15,0);
+				scr.x=0;
+				scr.y=0;
+				scr.w=639;
+				scr.h=479;
+				grid(scr,16,0,15,0);
+					
 
 			
 		
