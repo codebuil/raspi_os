@@ -4,6 +4,8 @@
 #define FONTDATAMAX 2048
 #define PI 3.1415927
 int memorys;
+int *randomizes;
+int randomizes2;
 uint16_t *fbp;
 struct arrayMaps{
 	int w;
@@ -5293,9 +5295,15 @@ for(f=0;f<steeps;f++){
 location=location+addss;
 }
 }
-
+int random(){
+	int r=randomizes[randomizes2];
+	randomizes2++;
+	return r;
+}
 
 void startX(){
+		randomizes=(int*)0x8000;
+		randomizes2=0;
 		memorys=0x04100008+640*480*2;
 		fbp=(uint16_t * )0x04100000;
 } 
@@ -5372,6 +5380,9 @@ for(f=0;f<steeps2;f++){
 	location=location+addss2;
 	locations=locations+addss4;
 }
+}
+void Ipixel(int x,int y,int *img,char r,char g,char b){
+if(x>=0 && x<=img[0] && y>=0 && y<=img[1]) img[x+(y*img[0])+3]=r<<16 | g << 8 | b;
 }
 
 
@@ -5655,19 +5666,18 @@ void kernel_main(uint32_t r0, uint32_t r1, uint32_t atags)
 	uart_init(2);
 	uart_puts("\ec\e[42;30m\nscreen!\r\n");
 	startX();
-	img1=creatImage(25,25);
+	img1=creatImage(32,32);
 	bodys=img1+3;
-			memfill((char *)bodys,25*25*4,255);
-					//boxs(0,0,639,479,0,15,0);
+			
 				scr.x=0;
 				scr.y=0;
 				scr.w=639;
 				scr.h=479;
 				grid(scr,16,0,15,0);
 				gputs(20,240,255,255,255,"hello world.....");
-				putImage(10,10,img1);
-			
-		
+
+			for(a=0;a<64;a++)bodys[random() & 1023]=255 << 24 | 255<<16 | 255<<8 | 255;
+				putImage(10,10,img1);		
 	
 
 	while (1)
