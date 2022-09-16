@@ -5384,6 +5384,122 @@ for(f=0;f<steeps2;f++){
 void Ipixel(int x,int y,int *img,char r,char g,char b){
 if(x>=0 && x<=img[0] && y>=0 && y<=img[1]) img[x+(y*img[0])+3]=r<<16 | g << 8 | b;
 }
+void ivline(int x,int y,int y2,int *img,char r,char g,char b){
+int f;
+int yy1=y;
+int yy2=y2;
+int yy3=y;
+int xx=x;
+int steeps;
+int location;
+int addss;
+if(yy2<yy1){
+yy1=yy2;
+yy2=yy3;
+}
+if(xx<0)xx=0;
+if(xx>img[0]-1)xx=img[0]-1;
+if(yy1<0)yy1=0;
+if(yy2<0)yy2=0;
+if(yy1>img[1]-1)yy1=img[1]-1;
+if(yy2>img[1]-1)yy2=img[1]-1;
+steeps=yy2-yy1;
+addss=img[0];
+location=yy1*img[0];
+for(f=0;f<steeps;f++){
+img[x+location+3]=r<<16 | g << 8 | b;
+location=location+addss;
+}
+} 
+void ihline(int x, int y,int x2,int *img,char r,char g,char b){
+int f;
+int xx1=x;
+int xx2=x2;
+int xx3=x;
+int yy=y;
+int steeps;
+int location;
+int addss;
+if(xx2<xx1){
+xx1=xx2;
+xx2=xx3;
+}
+if(yy<0)yy=0;
+if(yy>img[1]-1)yy=img[1]-1;
+if(xx1<0)xx1=0;
+if(xx2<0)xx2=0;
+if(xx1>img[0]-1)xx1=img[0]-1;
+if(xx2>img[0]-1)xx2=img[0]-1;
+steeps=xx2-xx1;
+addss=1;
+location=yy*img[0]+xx1+3;
+for(f=0;f<steeps;f++){
+img[f+location]=r<<16 | g << 8 | b;
+}
+}
+
+void iboxs(int x,int y,int x2,int y2,int *img,char r,char g,char b){
+int f;
+int ff;
+int xx1=x;
+int xx2=x2;
+int xx3=x;
+int yy1=y;
+int yy2=x2;
+int yy3=y;
+int yy=y;
+int steeps;
+int steeps2;
+int location;
+int addss;
+int addss2;
+if(xx2<xx1){
+xx1=xx2;
+xx2=xx3;
+}
+if(yy2<yy1){
+yy1=yy2;
+yy2=yy3;
+}
+if(yy1<0)yy1=0;
+if(yy2<0)yy2=0;
+if(yy1>img[1]-1)yy1=img[1]-1;
+if(yy2>img[1]-1)yy2=img[1]-1;
+if(xx1<0)xx1=0;
+if(xx2<0)xx2=0;
+if(xx1>img[0]-1)xx1=img[0]-1;
+if(xx2>img[0]-1)xx2=img[0]-1;
+steeps=xx2-xx1;
+steeps2=yy2-yy1;
+addss=1;
+addss2=img[0]-(xx2-xx1);
+location=yy*img[0]+xx1+3;
+for(f=0;f<steeps2;f++){
+	for(ff=0;ff<steeps;ff++){
+		img[x+location]=r<<16 | g << 8 | b;
+		location=location+addss;
+	}
+	location=location+addss2;
+}
+}
+void iline(int x,int y,int x2,int y2,int *img,char r,char g,char b){
+int i=-1;
+if(x>x2 && y<y2)i=5;
+if(x>x2 && y>y2)i=4;
+if(x<x2 && y<y2)i=3;
+if(x<x2 && y>y2)i=2;
+if(y==y2)i=0;
+if(x==x2)i=1;
+if (i==0)ihline(x,y,x2,img,r,g,b);
+if (i==1)ivline(x,y,y2,img,r,g,b);
+//if (i==2)ilineL(x,y,x2,y2,img,r,g,b);
+//if (i==3)ilineR(x,y,x2,y2,img,r,g,b);
+//if (i==4)ilineR(x2,y2,x,y,img,r,g,b);
+//if (i==5)ilineL(x2,y2,x,y,img,r,g,b);
+}
+
+
+
 
 
 void memfill(char *from,int lens,char value){
@@ -5676,7 +5792,7 @@ void kernel_main(uint32_t r0, uint32_t r1, uint32_t atags)
 				grid(scr,16,0,15,0);
 				gputs(20,240,255,255,255,"hello world.....");
 
-			for(a=0;a<64;a++)bodys[random() & 1023]=255 << 24 | 255<<16 | 255<<8 | 255;
+			for(a=0;a<31;a++)iline(a,0,a,31,img1,255,255,255);
 				putImage(10,10,img1);		
 	
 
